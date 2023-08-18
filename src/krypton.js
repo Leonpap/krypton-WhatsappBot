@@ -4,9 +4,8 @@ const {
     useMultiFileAuthState,
     fetchLatestBaileysVersion
 } = require('@whiskeysockets/baileys')
-const { QuickDB } = require('quick.db')
+const { QuickDB, JSONDriver } = require('quick.db')
 const { getConfig } = require('./getConfig')
-const { MongoDriver } = require('quickmongo')
 const { Collection } = require('discord.js')
 const MessageHandler = require('./Handlers/Message')
 const EventsHandler = require('./Handlers/Events')
@@ -21,7 +20,7 @@ const { join } = require('path')
 const { imageSync } = require('qr-image')
 const { readdirSync, remove } = require('fs-extra')
 const port = process.env.PORT || 3000
-const driver = new MongoDriver(process.env.URL)
+const driver = new JSONDriver()
 
 const start = async () => {
     const { state, saveCreds } = await useMultiFileAuthState('session')
@@ -143,14 +142,7 @@ const start = async () => {
     return client
 }
 
-if (!process.env.URL) return console.error('You have not provided any MongoDB URL!!')
-driver
-    .connect()
-    .then(() => {
-        console.log(`Connected to the database!`)
-        // Starts the script if gets a success in connecting with Database
-        start()
-    })
-    .catch((err) => console.error(err))
+//Starts the main function
+start()
 
 app.listen(port, () => console.log(`Server started on PORT : ${port}`))
